@@ -1,0 +1,33 @@
+version: "3.9"
+
+services: 
+  oap:
+    build: 
+      context: ./
+      dockerfile: dockerfileoap
+    image: skywalking-oap-image:v1
+    container_name: skywalking-oap-container
+    ports:
+      - "8051:11800"     #Expose Port for PHP
+    healthcheck:
+      test: [ "CMD-SHELL", "/skywalking/bin/swctl ch" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s    
+
+  skywalking-ui:
+    build: 
+      context: ./
+      dockerfile: dockerfileui
+    image: skywalking-ui-image:v1
+    container_name: skywalking-ui-container
+    depends_on:
+      oap:
+        condition: service_healthy
+    links:
+      - oap
+    ports:
+      - "8050:8080"     #Expose Port for UI Access
+    environment:
+      SW_OAP_ADDRESS: http://oap:12800
