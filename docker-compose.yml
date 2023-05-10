@@ -9,6 +9,7 @@ services:
     container_name: skywalking-oap-container
     ports:
       - "8051:11800"     #Expose Port for PHP
+      - "8052:12800"     #Expose Port for kong
     healthcheck:
       test: [ "CMD-SHELL", "/skywalking/bin/swctl ch" ]
       interval: 30s
